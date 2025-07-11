@@ -2,6 +2,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 driver = webdriver.Chrome()
 driver.get("https://demoqa.com/")
@@ -30,9 +31,10 @@ image_url = image.get_attribute("src")
 assert image_url.endswith("Toolsqa.jpg"), "Logo image src doesn't match expected"
 
 # 4) Verifying that Selenium training banner is clickable and takes us to toolsqa website
-toolsQA_banner = driver.find_element(By.XPATH,"//body")
+toolsQA_banner = driver.find_element(By.XPATH,"//img[@alt='Selenium Online Training']")
 toolsQA_banner.click()
 time.sleep(2)
+
 # Get window handles
 tabs = driver.window_handles
 driver.switch_to.window(tabs[1])  # Switch to the second tab
