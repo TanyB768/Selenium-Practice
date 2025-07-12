@@ -7,6 +7,7 @@ from selenium import webdriver #importing selenium package and webdriver module
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 """
     then Inside the webdriver module, there are browser-specific submodules.
@@ -17,7 +18,7 @@ from selenium.webdriver.support.wait import WebDriverWait
     ChromeDriver process behind the scenes.
 """
 driver = webdriver.Chrome()
-driver.implicitly_wait(10) # If any element which we find by find_element/s() is not loaded in 10 seconds then the
+#driver.implicitly_wait(10) # If any element which we find by find_element/s() is not loaded in 10 seconds then the
                            # the test will crash. So for this we should use try catch block.
 # driver variable holds the instance of webdriver module's Chrome() class which needs
 # chrome service as an argument, if the webdriver isn't put in PATH variables otherwise we need to
@@ -28,7 +29,7 @@ driver.implicitly_wait(10) # If any element which we find by find_element/s() is
     chrome_service = Service(executable_path="C:/path/to/chromedriver.exe")
     driver = webdriver.Chrome(service = chrome_service)
 """
-WebDriverWait(driver, 10) # Explicit Wait declaration
+#WebDriverWait(driver, 10) # Explicit Wait declaration
 
 driver.get("https://demoqa.com/") #get() function opens a URL
 print(driver.title) #prints the header
@@ -55,6 +56,8 @@ text_box_Email = driver.find_element(By.XPATH, "//input[@id='userEmail']")
 email = "xyz@gmail.com"
 text_box_Email.send_keys(email)
 text_box_SubmitButton = driver.find_element(By.XPATH, "//button[@id='submit']")
+driver.execute_script("arguments[0].scrollIntoView(true);", text_box_SubmitButton)
+WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "submit")))
 text_box_SubmitButton.click()
 output_name = driver.find_element(By.XPATH,"//div[@class='border col-md-12 col-sm-12']").text.split(":")[1].strip("\n").splitlines()[0]
 output_email = driver.find_element(By.XPATH,"//p[@id='email']").text.split(":")[1].strip("\n").splitlines()[0]
@@ -69,7 +72,7 @@ output_email = driver.find_element(By.XPATH,"//p[@id='email']").text.split(":")[
     split the first line from the rest of the output and hence the index value[0]. Then we finally get our entered name
     that we can verify in the if block
 """
-if((output_name == name) and (output_email == email)):
+if (output_name == name) and (output_email == email):
     print("Name and Email Found")
 driver.minimize_window()
 
