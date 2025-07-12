@@ -55,10 +55,19 @@ text_box_Fullname.send_keys(name)
 text_box_Email = driver.find_element(By.XPATH, "//input[@id='userEmail']")
 email = "xyz@gmail.com"
 text_box_Email.send_keys(email)
+
 text_box_SubmitButton = driver.find_element(By.XPATH, "//button[@id='submit']")
+""" SCROLL THE PAGE TILL YOU SEE SUBMIT BUTTON TO CLICK ON IT """
 driver.execute_script("arguments[0].scrollIntoView(true);", text_box_SubmitButton)
+# This is important because of different screen sizes not being able to show content as each other.
+# As a higher res screen will show more content and hence "Submit" button was visible on my PC.
+# But not visible on my office PC as it has only 768p res screen and doesn't show submit button in the viewport.
+# So scrolling downwards to actually see the submit button makes it clickable and makes this test script work
+# for any other PC.
+""" Now wait for the submit button to be clickable (just practicing the explicit waits here) """
 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "submit")))
 text_box_SubmitButton.click()
+# Get the displayed name and email and extract it from the paragraph.
 output_name = driver.find_element(By.XPATH,"//div[@class='border col-md-12 col-sm-12']").text.split(":")[1].strip("\n").splitlines()[0]
 output_email = driver.find_element(By.XPATH,"//p[@id='email']").text.split(":")[1].strip("\n").splitlines()[0]
 
@@ -68,7 +77,7 @@ output_email = driver.find_element(By.XPATH,"//p[@id='email']").text.split(":")[
     found in the paragraph 1 (coz there are 2 paras - 1) "Name:" 2)"Email:") which was in a dynamic div which becomes 
     visible when name and text is entered in the text box and submit button is clicked.
     So using split() which takes a string/char as an input to split the string from that found char/string, it splits
-    the para 1 from ":" as in "Name:" and returns "Tanishq Bodh\n Email". After that we use splitlines() funciton to 
+    the para 1 from ":" as in "Name:" and returns "Tanishq Bodh\n Email". After that we use splitlines() function to 
     split the first line from the rest of the output and hence the index value[0]. Then we finally get our entered name
     that we can verify in the if block
 """
