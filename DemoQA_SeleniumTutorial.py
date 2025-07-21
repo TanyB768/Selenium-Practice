@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
+
 """
     then Inside the webdriver module, there are browser-specific submodules.
     Of which "service" module helps manage the ChromeDriver service.
@@ -71,7 +72,14 @@ output_email = driver.find_element(By.XPATH,"//p[@id='email']").text.split(":")[
 """
 if((output_name == name) and (output_email == email)):
     print("Name and Email Found")
-driver.minimize_window()
+"""
+    Handling Checkboxes, radio buttons, broken links
+"""
+# 1) Selecting specific checkboxes
+checkbox_section = driver.find_element(By.XPATH,"//*[@id='item-1']")
+checkbox_section.click()
+checkbox_section.find_element(By.XPATH,"//span[@class='rct-title']").click()
+time.sleep(3)
 
 input("Press Enter to exit...")
 
