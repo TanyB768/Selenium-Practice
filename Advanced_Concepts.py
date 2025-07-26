@@ -170,13 +170,13 @@ if __name__ == '__main__':
         driver = nav.get_driver()
         # passing driver as an argument to the functions makes selenium functions
         # available to my_driver object of above functions
-        # handle_browser_alerts(driver)
-        # delayed_alert(driver)
-        # handle_cancel_or_ok_alerts(driver)
-        # handle_text_alerts(driver)
-        # handle_new_window(driver)
-        # handle_iFrames(driver)
-        # handle_download(driver)
+        handle_browser_alerts(driver)
+        delayed_alert(driver)
+        handle_cancel_or_ok_alerts(driver)
+        handle_text_alerts(driver)
+        handle_new_window(driver)
+        handle_iFrames(driver)
+        handle_download(driver)
         handle_upload(driver)
 
     finally:
