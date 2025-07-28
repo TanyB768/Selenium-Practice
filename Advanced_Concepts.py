@@ -154,7 +154,7 @@ def handle_upload(my_driver):
     # Locate the file input field
     upload_input = nav.get_element((By.ID, "uploadFile"))
     # Provide full path of the file you want to upload
-    file_to_upload = "C:\\Users\\gamer\\Downloads\\DemoQA Downloads\\sampleFile.jpeg"
+    file_to_upload = nav.upload_dir
     upload_input.send_keys(file_to_upload)
     # Confirm upload message
     uploaded_msg = nav.get_element((By.ID, "uploadedFilePath")).text

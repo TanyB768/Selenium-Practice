@@ -9,8 +9,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Navigation:
     def __init__(self):
-        # Define download path. Can be custom download path too like in the end of code's commented __init__ class
+        # Define download and upload path. Can be custom download path too like in the end of code's commented __init__ class
         self.download_dir = os.path.join(os.getcwd(), "downloads")
+        self.upload_dir = os.path.join(os.getcwd(), "uploads", "sample_file.txt")
         # This is a check if the downloads folder in the above location doesn't exist
         # it can be created through os.makedirs and if already exist then no need to create again.
         os.makedirs(self.download_dir, exist_ok=True)
