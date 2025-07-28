@@ -164,20 +164,81 @@ def handle_upload(my_driver):
     else:
         print("Upload may have failed or no file path displayed.")
 
+def handle_checkboxes(my_driver, timeout=10):
+    nav.goto_toolsqa_page("checkbox")  # fixed typo
+    # Wait for the Expand All button to be clickable and click the '+' icon.
+    show_checkboxes = WebDriverWait(my_driver, timeout).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[@title='Expand all']"))
+    )
+    show_checkboxes.click()
+    print("Expand All button clicked.")
+    time.sleep(1)
+    # Collapse the checkboxes by clicking the '-' button
+    collapse_checkboxes = WebDriverWait(my_driver, timeout).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[@title='Collapse all']"))
+    )
+    collapse_checkboxes.click()
+    time.sleep(1)
+    # Expand it again for the checkboxes to be visible in DOM
+    show_checkboxes.click()
+    # Optional: wait briefly to allow DOM expansion
+    WebDriverWait(my_driver, timeout).until(
+        EC.presence_of_all_elements_located((By.CLASS_NAME, "rct-node"))
+    )
+    # Find all checkbox elements
+    checkboxes = my_driver.find_elements(By.CLASS_NAME, "rct-checkbox")
+    print(f"Total checkboxes found: {len(checkboxes)}")
+    # Select all checkboxes by clicking first one as they're hidden in the Home <span> tag
+    # if we want to select/deslect other checkboxes inside then we must do that by using
+    # their indices.
+    checkboxes[0].click() # checks all check boxes.
+    time.sleep(2)
+
+    # Deselect checkboxes at odd indices
+    for index, checkbox in enumerate(checkboxes):
+        if index % 2 != 0:  # odd index
+            checkbox.click()
+            time.sleep(1)
+    """
+        Select only checkboxes which were unchecked keeping track of already checked once
+        As checkboxes in DemoQA are also in heirarchical order meaning that a parent node/ 
+        checkbox can be in a partial 'mixed' state so it's not fully unchecked and so the
+        loop below also checks or unchecks some parent folder too resulting in undesirable 
+        behaviour. Though it will work fine in normal checkbox list.
+    """
+    # for index, checkbox in enumerate(checkboxes):
+    #     if checkbox.is_selected():
+    #         continue
+    #     else:
+    #         checkbox.click()
+    #         time.sleep(1)
+
+    parents_to_skip = ["home", "office", "documents", "downloads"]
+
+    for checkbox in checkboxes:
+        label = checkbox.find_element(By.XPATH, "./ancestor::label").text.lower()
+        if label in parents_to_skip:
+            continue
+        if not checkbox.is_selected():
+            checkbox.click()
+            time.sleep(0.5)
+
+
 if __name__ == '__main__':
     try:
         nav = Navigation()
         driver = nav.get_driver()
         # passing driver as an argument to the functions makes selenium functions
         # available to my_driver object of above functions
-        handle_browser_alerts(driver)
-        delayed_alert(driver)
-        handle_cancel_or_ok_alerts(driver)
-        handle_text_alerts(driver)
-        handle_new_window(driver)
-        handle_iFrames(driver)
-        handle_download(driver)
-        handle_upload(driver)
+        # handle_browser_alerts(driver)
+        # delayed_alert(driver)
+        # handle_cancel_or_ok_alerts(driver)
+        # handle_text_alerts(driver)
+        # handle_new_window(driver)
+        # handle_iFrames(driver)
+        # handle_download(driver)
+        # handle_upload(driver)
+        handle_checkboxes(driver)
 
     finally:
         nav.quit_driver()
