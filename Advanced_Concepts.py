@@ -223,6 +223,80 @@ def handle_checkboxes(my_driver, timeout=10):
             checkbox.click()
             time.sleep(0.5)
 
+def handle_links(my_driver, timeout=10):
+    nav.goto_toolsqa_page("links")
+
+    # This is used to get back to the original window
+    original_window = driver.current_window_handle
+
+    # Wait for All links to be clickable. Links have <a> tag and href and text as attributes.
+    # DemoQA test links are inside a specific div with id='linkWrapper'
+    # Find all <a> tags inside #linkWrapper (ignores header/footer links)
+    all_links = driver.find_elements(By.CSS_SELECTOR, "#linkWrapper a")
+    print(f"Found {len(all_links)} links.\n")
+
+    for index in range(len(all_links)):
+        # Refresh the list of links on the page to avoid stale elements exception
+        all_links = driver.find_elements(By.CSS_SELECTOR, "#linkWrapper a")
+        link = all_links[index]
+
+        link_text = link.text.strip() or "(No text)"
+        href = link.get_attribute("href")
+
+        # Skip non-clickable or malformed links
+        if not href:
+            print(f"Skipping link {index + 1}: Text='{link_text}' | Href=None")
+            continue
+
+        print(f"\n➡️ Clicking link {index + 1}: Text='{link_text}' | Href={href}")
+        original_tabs = driver.window_handles
+        original_url = driver.current_url
+
+        try:
+            link.click()
+            time.sleep(2)
+
+            # Check if a new tab was opened
+            new_tabs = driver.window_handles
+            if len(new_tabs) > len(original_tabs):
+                # Step 1: Record all tabs before clicking
+                original_tabs = driver.window_handles
+                # Step 2: Click the link that opens a new tab
+                link.click()
+                # Step 3: Wait for the new tab to open (you can add time.sleep or wait if needed)
+                time.sleep(2)
+                # Step 4: Get the updated list of all open tabs
+                new_tabs = driver.window_handles
+                # Step 5: Find the newly opened tab manually
+                for tab in new_tabs:
+                    if tab not in original_tabs:
+                        new_tab = tab
+                        break
+                driver.switch_to.window(new_tab)
+                print("🆕 New tab opened:")
+                print("   Title:", driver.title)
+                print("   URL:", driver.current_url)
+                driver.close()
+                driver.switch_to.window(original_window)
+            else:
+                # Same tab navigation (fallback)
+                if driver.current_url != original_url:
+                    print("🔄 Navigated to new page:")
+                    print("   Title:", driver.title)
+                    print("   URL:", driver.current_url)
+                    driver.back()
+                    WebDriverWait(driver, 10).until(EC.url_to_be(original_url))
+                else:
+                    # Possibly an API link with response shown on page
+                    try:
+                        response_element = driver.find_element(By.ID, "linkResponse")
+                        print("🔁 API Response:", response_element.text)
+                    except:
+                        print("ℹ️ No visible response found.")
+
+        except Exception as e:
+            print(f"⚠️ Error clicking link: {e}")
+
 
 if __name__ == '__main__':
     try:
@@ -238,7 +312,8 @@ if __name__ == '__main__':
         # handle_iFrames(driver)
         # handle_download(driver)
         # handle_upload(driver)
-        handle_checkboxes(driver)
+        # handle_checkboxes(driver)
+        handle_links(driver)
 
     finally:
         nav.quit_driver()
